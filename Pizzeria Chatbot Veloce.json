@@ -1,0 +1,277 @@
+{
+  "name": "Pizzeria Chatbot Veloce",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a8875440-7e67-4a76-98b2-804e57d6a17b",
+      "name": "When chat message received",
+      "webhookId": "427f4d5b-7177-4cdc-83da-eb49f3a5faa3"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "\"Sei l'assistente virtuale della Pizzeria Rapallo. Il tuo compito è rispondere alle domande dei clienti riguardo al menu. Usa sempre lo strumento a tua disposizione (Google Sheets) per leggere in tempo reale le pizze, i prezzi e gli ingredienti. Sii cordiale, veloce e invoglia i clienti all'acquisto. Se chiedono una pizza che non è nel foglio, di' gentilmente che non la fate.\"\nLimiti: \"Se un cliente ti chiede cose non legate alla pizzeria (es. politica o sport), rispondi educatamente che sei qui solo per consigliare le nostre deliziose pizze.\"\n\nStile: \"Usa spesso le emoji per rendere la conversazione più calda e appetitosa (🍕, 🍅, 🤤).\"\n\nSicurezza: \"Non inventare MAI prezzi o ingredienti. Basati solo e rigorosamente sui dati che leggi nel foglio Google.\"\n\n2. Aggiungere nuovi \"Strumenti\" (T\n\nUsa 'Get Row' per il menu e 'Append Row' per scrivere gli ordini nel foglio Ordini quando hai nome, pizza e indirizzo."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a9338b4a-f85f-45a2-8fe0-f4cec413d9c5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "ae40a0c4-866e-4183-9b37-dc921389d9a9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rzOY7FeeqkZF9FGw",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "5791ac40-eca1-476a-9722-5ca341010406",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1TqVa8vLybunYHlkoq0ZfP_fkLSW2cK3EQyxONtcvwNk",
+          "mode": "list",
+          "cachedResultName": "Pizzeria_Rapallo_Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TqVa8vLybunYHlkoq0ZfP_fkLSW2cK3EQyxONtcvwNk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 884124644,
+          "mode": "list",
+          "cachedResultName": "Menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TqVa8vLybunYHlkoq0ZfP_fkLSW2cK3EQyxONtcvwNk/edit#gid=884124644"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        208
+      ],
+      "id": "a07a5c5a-7f6f-4f8f-9180-ad64e41f3e9c",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pzqNa3rkelHi5I7S",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1TqVa8vLybunYHlkoq0ZfP_fkLSW2cK3EQyxONtcvwNk",
+          "mode": "list",
+          "cachedResultName": "Pizzeria_Rapallo_Manager",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TqVa8vLybunYHlkoq0ZfP_fkLSW2cK3EQyxONtcvwNk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1335202447,
+          "mode": "list",
+          "cachedResultName": "Ordini",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TqVa8vLybunYHlkoq0ZfP_fkLSW2cK3EQyxONtcvwNk/edit#gid=1335202447"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Timestamp', `scrivi qua il tempo essato della comanda\n`, 'string') }}",
+            "Cliente": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Cliente', ``, 'string') }}",
+            "Dettaglio_Ordine": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Dettaglio_Ordine', ``, 'string') }}",
+            "Tipo_Ordine": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tipo_Ordine', ``, 'string') }}",
+            "Indirizzo_Note": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Indirizzo_Note', ``, 'string') }}",
+            "Stato": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Stato', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dettaglio_Ordine",
+              "displayName": "Dettaglio_Ordine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo_Ordine",
+              "displayName": "Tipo_Ordine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Indirizzo_Note",
+              "displayName": "Indirizzo_Note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Stato",
+              "displayName": "Stato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        304
+      ],
+      "id": "08bb62e1-29af-41f5-a8ab-909f5680b275",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pzqNa3rkelHi5I7S",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5a509fcc-cb41-46a1-9498-e2c85896bc1b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "620a94528aa23ff527ff622ec7c30815bdc2737b39d1dcf0224f78b7964c4499"
+  },
+  "id": "yefEDqEypFB8Uttn",
+  "tags": []
+}
